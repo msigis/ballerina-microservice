@@ -2,7 +2,6 @@ import ballerina/http;
 import ballerina/log;
 import ballerina/io;
 import ballerina/sql;
-//import ballerinax/jdbc;
 import ballerina/mysql;
 
 
@@ -19,9 +18,16 @@ mysql:Client DBMysql = new({
         port: 3306,
         name: "testdb_ballerina",
         username: "root",
-        password: "massimo",
-        dbOptions: { useSSL: false }
+        password: "massimo"
     });
+    mysql:Client DBMysql = new({
+            host: "localhost",
+            port: 3306,
+            name: "testdb",
+            username: "test",
+            password: "test",
+            dbOptions: { useSSL: false }
+        });
   http:Client clientEndpoint = new("https://api.openweathermap.org");
 
 
