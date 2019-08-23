@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="BALLERINA_REPOSITORY &lt;module&gt;">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../../../../AS/Wso2/ballerina/ballerina-1.0.0-alpha" />
+      <root url="file://$PROJECT_DIR$/../../../../AS/Wso2/ballerina/ballerina-1.0.0-alpha/lib/repo/ballerinax" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../../../../AS/Wso2/ballerina/ballerina-1.0.0-alpha" />
+      <root url="file://$PROJECT_DIR$/../../../../AS/Wso2/ballerina/ballerina-1.0.0-alpha/lib/repo/ballerinax" />
+    </SOURCES>
+    <excluded>
+      <root url="file://$PROJECT_DIR$" />
+      <root url="file://$PROJECT_DIR$/module" />
+    </excluded>
+  </library>
+</component>
