@@ -67,7 +67,7 @@ public function main(string... args) {
             jdbc:Parameter p7 = { sqlType: jdbc:TYPE_DECIMAL, value: windspeed_float };
             jdbc:Parameter p8 = { sqlType: jdbc:TYPE_SMALLINT, value: winddeg };
             //sql:Parameter p9 = { sqlType: sql:TYPE_SMALLINT, value: clouds };
-            //jdbc:Parameter p10 = { sqlType: jdbc:TYPE_VARCHAR, value: weather };
+            //jdbc:Parameter p10 = { sqlType: jdbc:TYPE_VARCHAR, value: weather }; 
             jdbc:Parameter p11 = { sqlType: jdbc:TYPE_BLOB, value: <anydata>response.getBinaryPayload() };
 
 
