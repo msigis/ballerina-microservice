@@ -74,7 +74,7 @@ public function main(string... args) {
 
 
             io:println("\nThe update operation - Inserting data to a table");
-            var ret = DBMysql->update("INSERT INTO openweathermap(cityid, cityname, temp, pressure, humidity, visibility, windspeed, winddeg , weather, json_)
+            var ret = DBMysql->update("INSERT INTO openweathermap(cityid, cityname, temp, pressure, humidity, visibility, windspeed, winddeg , json_)
                                      values (?,?,?,?,?,?,?,?,?)", p1,p2,p3,p4,p5,p6,p7,p8,p11);
             handleUpdate(ret, "Insert to openweathermap table ");
 
