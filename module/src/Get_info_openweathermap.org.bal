@@ -32,7 +32,7 @@ public function main(string... args) {
         if (msg is json) {
 
             json jsonPayload = msg;
-            io:println(jsonPayload);
+            log:printInfo(jsonPayload.toJsonString());
 
             var cityid = <int>jsonPayload.id;
             var cityname = <string>jsonPayload.name;
