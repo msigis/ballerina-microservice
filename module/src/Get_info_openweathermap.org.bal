@@ -1,33 +1,16 @@
 import ballerina/http;
 import ballerina/log;
 import ballerina/io;
-import ballerina/sql;
-import ballerina/mysql;
+import ballerinax/java.jdbc;
 
-
-//jdbc:Client DBMysql = new({
-//        url: "jdbc:mysql://localhost:3306/testdb_ballerina",
-//        username: "root",
- //       password: "massimo",
-//       poolOptions: { maximumPoolSize: 5 },
-//        dbOptions: { useSSL: false,  serverTimezone: "UTC" }
-//    });
-    // Create a client endpoint for MySQL database. Change the DB details before running the sample.
-mysql:Client DBMysql = new({
-        host: "localhost",
-        port: 3306,
-        name: "testdb_ballerina",
+jdbc:Client DBMysql = new({
+        url: "jdbc:mysql://localhost:3306/testdb_ballerina",
         username: "root",
-        password: "massimo"
+       password: "massimo",
+       poolOptions: { maximumPoolSize: 5 },
+        dbOptions: { useSSL: false,  serverTimezone: "UTC" }
     });
-    mysql:Client DBMysql = new({
-            host: "localhost",
-            port: 3306,
-            name: "testdb",
-            username: "test",
-            password: "test",
-            dbOptions: { useSSL: false }
-        });
+       
   http:Client clientEndpoint = new("https://api.openweathermap.org");
 
 
@@ -43,7 +26,7 @@ public function main(string... args) {
         log:printInfo("Content-Type: " + contentType);
 
         int statusCode = response.statusCode;
-        log:printInfo("Status code: " + statusCode);
+        log:printError(io:sprintf("Status code: " , statusCode));
 
         var msg = response.getJsonPayload();
         if (msg is json) {
@@ -71,44 +54,46 @@ public function main(string... args) {
                 winddeg = <int>jsonPayload.wind.deg;
             }  else { io:println("error wind.deg not present"); }
             //var clouds = <int>jsonPayload.clouds.all;
-            var weather = <string>jsonPayload.weather[0].main;
+            //var weather = <string>jsonPayload.weather.main;
 
 
             // Inserts data to the table using the update action.
-            sql:Parameter p1 = { sqlType: sql:TYPE_INTEGER, value: cityid };
-            sql:Parameter p2 = { sqlType: sql:TYPE_VARCHAR, value: cityname };
-            sql:Parameter p3 = { sqlType: sql:TYPE_DECIMAL, value: temperature };
-            sql:Parameter p4 = { sqlType: sql:TYPE_SMALLINT, value: pressure };
-            sql:Parameter p5 = { sqlType: sql:TYPE_SMALLINT, value: humidity };
-            sql:Parameter p6 = { sqlType: sql:TYPE_SMALLINT, value: visibility };
-            sql:Parameter p7 = { sqlType: sql:TYPE_DECIMAL, value: windspeed_float };
-            sql:Parameter p8 = { sqlType: sql:TYPE_SMALLINT, value: winddeg };
+            jdbc:Parameter p1 = { sqlType: jdbc:TYPE_INTEGER, value: cityid };
+            jdbc:Parameter p2 = { sqlType: jdbc:TYPE_VARCHAR, value: cityname };
+            jdbc:Parameter p3 = { sqlType: jdbc:TYPE_DECIMAL, value: temperature };
+            jdbc:Parameter p4 = { sqlType: jdbc:TYPE_SMALLINT, value: pressure };
+            jdbc:Parameter p5 = { sqlType: jdbc:TYPE_SMALLINT, value: humidity };
+            jdbc:Parameter p6 = { sqlType: jdbc:TYPE_SMALLINT, value: visibility };
+            jdbc:Parameter p7 = { sqlType: jdbc:TYPE_DECIMAL, value: windspeed_float };
+            jdbc:Parameter p8 = { sqlType: jdbc:TYPE_SMALLINT, value: winddeg };
             //sql:Parameter p9 = { sqlType: sql:TYPE_SMALLINT, value: clouds };
-            sql:Parameter p10 = { sqlType: sql:TYPE_VARCHAR, value: weather };
-            sql:Parameter p11 = { sqlType: sql:TYPE_BLOB, value: <any>response.getBinaryPayload() };
+            //jdbc:Parameter p10 = { sqlType: jdbc:TYPE_VARCHAR, value: weather };
+            jdbc:Parameter p11 = { sqlType: jdbc:TYPE_BLOB, value: <anydata>response.getBinaryPayload() };
 
 
 
 
             io:println("\nThe update operation - Inserting data to a table");
             var ret = DBMysql->update("INSERT INTO openweathermap(cityid, cityname, temp, pressure, humidity, visibility, windspeed, winddeg , weather, json_)
-                                     values (?,?,?,?,?,?,?,?,?,?)", p1,p2,p3,p4,p5,p6,p7,p8,p10,p11);
+                                     values (?,?,?,?,?,?,?,?,?)", p1,p2,p3,p4,p5,p6,p7,p8,p11);
             handleUpdate(ret, "Insert to openweathermap table ");
 
         } else {
-            log:printError(<string>msg.detail().message, err = msg);
+            log:printError(io:sprintf("Invalid payload received:" , msg.reason()));
+
         }
     } else {
-        log:printError(<string>response.detail().message, err = response);
+         log:printError(io:sprintf("Error when calling the backend: ", response.reason()));
     }
 
 }
 
-	function handleUpdate(sql:UpdateResult|error returned, string message) {
-        if (returned is sql:UpdateResult) {
-            io:println(message + " status: " + returned.updatedRowCount);
-        } else {
-            io:println(message + " failed: " + <string>returned.detail().message);
-        }
+	function handleUpdate(jdbc:UpdateResult|jdbc:Error returned, string message) {
+    if (returned is jdbc:UpdateResult) {
+        io:println(message, " status: ", returned.updatedRowCount);
+    } else {
+        error err = returned;
+        io:println(message, " failed: ", <string> err.detail()["message"]);
+    }
     }
 
